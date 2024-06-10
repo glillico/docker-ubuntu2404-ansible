@@ -11,7 +11,8 @@ RUN apt-get update \
 # Clean the apt cache.
 # Remove documents, man pages & apt files.
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-ansible \
+python3 \
+python3-pip \
 sudo \
 systemd \
 systemd-sysv \
@@ -20,6 +21,17 @@ systemd-sysv \
 && rm -rf /var/lib/apt/lists/* \
 && rm -rf /usr/share/doc/* \
 && rm -rf /usr/share/man/*
+
+# Remove python warning file.
+RUN rm -f /usr/lib/python3.12/EXTERNALLY-MANAGED
+
+# Upgrade pip.
+RUN pip3 install --upgrade pip \
+&& python3 -m pip cache purge
+
+# Install ansible.
+RUN pip3 install ansible \
+&& python3 -m pip cache purge
 
 # Create ansible directory and copy ansible inventory file.
 RUN mkdir /etc/ansible
